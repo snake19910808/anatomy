@@ -28,7 +28,7 @@
   .section-divider { border-top: 1px solid #2d3748; margin: 24px 0; }
 </style>
 </head>
-<body x-data="app()" class="min-h-screen p-4 md:p-8">
+<body x-data="app()" @mark-section.window="markSectionFromEvent($event.detail.index)" class="min-h-screen p-4 md:p-8">
 
 <!-- Header -->
 <div class="max-w-4xl mx-auto">
@@ -41,13 +41,13 @@
       </div>
       <div class="text-right">
         <div class="text-xs text-slate-400">預計學習時間</div>
-        <div class="text-lg font-bold text-blue-400">45 分鐘</div>
+        <div class="text-lg font-bold text-blue-400">190 分鐘</div>
       </div>
     </div>
     <div class="progress-bar mt-4">
       <div class="progress-fill" :style="`width: ${progressPct}%`"></div>
     </div>
-    <div class="text-xs text-slate-500 mt-1" x-text="`已完成 ${completedSections}/5 個區塊`"></div>
+    <div class="text-xs text-slate-500 mt-1" x-text="`已完成 ${completedSections}/9 個區塊`"></div>
   </div>
 
   <!-- ⚠️ RED FLAGS -->
@@ -190,6 +190,9 @@
       → 同時往「前」+ 往「上」+ 往「外側」施力<br>
       → 這三個方向不是分開做，而是合成一個斜角力向量，一次施力完成。
     </div>
+    <button @click="markSection(1)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[1] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[1] ? '✓ 向量已記住' : '標記為已記住'"></span>
+    </button>
   </div>
 
   <!-- 概念導入 -->
@@ -220,8 +223,120 @@
         <span>🔴 C2 棘突 → 軸椎錯位調整點</span>
       </div>
     </div>
-    <button @click="markSection(1)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[1] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
-      <span x-text="sectionDone[1] ? '✓ 概念已掌握' : '標記為已讀'"></span>
+    <button @click="markSection(2)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[2] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[2] ? '✓ 概念已掌握' : '標記為已讀'"></span>
+    </button>
+  </div>
+
+  <!-- 功能性力學 — 吊車掛鉤 -->
+  <div class="card p-5 mb-6">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-2xl">⚙️</span>
+      <h2>功能性力學 — 吊車掛鉤比喻</h2>
+    </div>
+    <p class="text-sm text-slate-400 mb-4">為什麼 PI 髂骨錯位會造成「短腿」？理解這條因果鏈，Derifield 測試就完全說得通。</p>
+
+    <div class="mb-5">
+      <div class="text-xs font-bold text-slate-300 mb-3 uppercase tracking-wide">三步因果鏈</div>
+      <div class="flex flex-col gap-1">
+        <div class="flex items-start gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="text-amber-400 font-bold text-lg shrink-0 w-6">①</span>
+          <div>
+            <div class="font-bold text-sm text-amber-300">髂骨向後下旋轉（PI）</div>
+            <div class="text-xs text-slate-300 mt-1">PSIS 往下、ASIS 往上。整塊髂骨繞薦髂關節做「後下旋轉」。</div>
+          </div>
+        </div>
+        <div class="text-slate-600 text-center text-xs py-1">↓</div>
+        <div class="flex items-start gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="text-blue-400 font-bold text-lg shrink-0 w-6">②</span>
+          <div>
+            <div class="font-bold text-sm text-blue-300">髖臼跟著上移</div>
+            <div class="text-xs text-slate-300 mt-1">髖臼（Acetabulum）是髂骨的一部分，髂骨後下旋轉時髖臼相對上提。</div>
+            <div class="text-xs text-blue-400 mt-1">💡 把髖臼想成「吊車的掛鉤」— 吊臂旋轉，掛鉤跟著動</div>
+          </div>
+        </div>
+        <div class="text-slate-600 text-center text-xs py-1">↓</div>
+        <div class="flex items-start gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="text-green-400 font-bold text-lg shrink-0 w-6">③</span>
+          <div>
+            <div class="font-bold text-sm text-green-300">股骨被拉高 → 功能性短腿</div>
+            <div class="text-xs text-slate-300 mt-1">股骨頭坐在髖臼裡，掛鉤上移 → 股骨（腿）跟著被拉高。俯臥看腳跟，該側「看起來」較短。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 示意圖 -->
+    <div class="bg-slate-900 rounded-xl p-4 mb-4">
+      <div class="text-xs text-slate-400 mb-2 text-center">左：正常　右：PI 錯位</div>
+      <svg viewBox="0 0 340 180" width="100%" style="max-width:440px; display:block; margin:auto">
+        <!-- Normal side label -->
+        <text x="55" y="14" font-size="10" fill="#94a3b8" text-anchor="middle">正常</text>
+        <!-- Sacrum L -->
+        <polygon points="35,28 75,28 78,90 32,90" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+        <!-- Ilium L normal -->
+        <path d="M32,90 Q10,72 14,44 Q20,26 35,28 Z" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+        <!-- Acetabulum L normal position -->
+        <circle cx="18" cy="105" r="11" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="18" y="108" font-size="7" fill="#60a5fa" text-anchor="middle">髖臼</text>
+        <!-- Femur L -->
+        <line x1="18" y1="116" x2="18" y2="166" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>
+        <line x1="6" y1="166" x2="30" y2="166" stroke="#94a3b8" stroke-width="2"/>
+        <!-- PSIS L -->
+        <circle cx="34" cy="52" r="4" fill="#f97316"/>
+        <text x="2" y="54" font-size="7" fill="#f97316">PSIS</text>
+
+        <!-- Divider -->
+        <line x1="138" y1="8" x2="138" y2="175" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <!-- PI side label -->
+        <text x="250" y="14" font-size="10" fill="#fca5a5" text-anchor="middle">PI 錯位</text>
+        <!-- Sacrum R -->
+        <polygon points="218,28 258,28 262,90 214,90" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+        <!-- Ilium R PI rotated (rotated posterior-inferior: left edge goes down) -->
+        <path d="M214,90 Q192,78 196,50 Q200,28 218,28 Z" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+        <!-- Acetabulum R elevated -->
+        <circle cx="198" cy="90" r="11" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="198" y="93" font-size="7" fill="#ef4444" text-anchor="middle">髖臼↑</text>
+        <!-- Femur R (shorter) -->
+        <line x1="198" y1="101" x2="198" y2="151" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>
+        <line x1="186" y1="151" x2="210" y2="151" stroke="#fca5a5" stroke-width="2"/>
+        <!-- PSIS R lower -->
+        <circle cx="215" cy="68" r="4" fill="#ef4444"/>
+        <text x="220" y="70" font-size="7" fill="#ef4444">PSIS↓</text>
+        <!-- Gap indicator -->
+        <line x1="225" y1="151" x2="225" y2="166" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="228" y="162" font-size="8" fill="#fbbf24">短腿</text>
+        <!-- Dotted comparison line -->
+        <line x1="6" y1="166" x2="186" y2="151" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="100" y="178" font-size="8" fill="#fbbf24" text-anchor="middle">← 功能性腿長差異</text>
+      </svg>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-3 mb-4">
+      <div class="bg-green-950 border border-green-800 rounded-lg p-3">
+        <div class="font-bold text-green-300 text-sm mb-1">✅ 功能性短腿（Thompson範疇）</div>
+        <div class="text-xs text-slate-300">骨骼長度實際相同，是骨盆旋轉改變股骨「起點」。矯正骨盆後腿長立刻恢復。</div>
+      </div>
+      <div class="bg-slate-800 rounded-lg p-3">
+        <div class="font-bold text-slate-300 text-sm mb-1">📏 結構性短腿（非Thompson範疇）</div>
+        <div class="text-xs text-slate-300">骨骼本身長度不等，需X光確認，無法透過脊椎調整改善。</div>
+      </div>
+    </div>
+
+    <div class="bg-amber-950 border border-amber-800 rounded-lg p-3 text-sm mb-4">
+      <strong class="text-amber-300">Derifield 的力學邏輯：</strong>
+      <div class="text-xs text-slate-300 mt-1">彎膝90度後骨盆肌肉張力改變，旋轉代償被抵消。短腿消失（Balance）= 肌肉問題；短腿維持（Stay Short）= 骨盆旋轉本身 = PI 髂骨錯位。</div>
+    </div>
+
+    <div class="bg-slate-800 rounded-lg p-3 text-sm mb-4">
+      <strong class="text-amber-400">口訣：</strong>
+      <div class="text-center mt-2 text-base font-bold text-amber-300">後下旋轉 → 髖部上提 → 腿部縮短</div>
+      <div class="text-center text-xs text-slate-400 mt-1">PI = Posterior Inferior 後下　→　Acetabulum rises 髖臼上移　→　Leg appears short 腿縮短</div>
+    </div>
+
+    <button @click="markSection(3)" class="px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[3] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[3] ? '✓ 力學已理解' : '標記為已理解'"></span>
     </button>
   </div>
 
@@ -354,16 +469,234 @@
         <li><strong>髂嵴</strong>：腰部兩側的骨骼邊緣，褲頭所在位置</li>
       </ul>
     </div>
-    <button @click="markSection(2)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[2] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
-      <span x-text="sectionDone[2] ? '✓ 圖解已學習' : '標記為已學'"></span>
+    <button @click="markSection(4)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[4] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[4] ? '✓ 圖解已學習' : '標記為已學'"></span>
     </button>
   </div>
 
-  <!-- 題庫 -->
+  <!-- IN/EX 閉孔對比 + X光三基線 -->
+  <div class="card p-5 mb-6">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-2xl">🔬</span>
+      <h2>視覺辨識：IN/EX 閉孔對比 + X光三基線</h2>
+    </div>
+
+    <!-- IN/EX Obturator comparison -->
+    <div class="mb-5">
+      <div class="text-xs font-bold text-slate-300 mb-2 uppercase tracking-wide">IN vs EX — 閉孔（Obturator Foramen）形狀變化</div>
+      <p class="text-xs text-slate-400 mb-3">髂骨旋轉會改變閉孔的外觀形狀，這是X光判讀的重要線索：</p>
+      <div class="grid grid-cols-2 gap-4">
+        <!-- IN -->
+        <div class="bg-slate-900 rounded-xl p-3 text-center">
+          <div class="text-xs font-bold text-blue-300 mb-2">IN（內旋）</div>
+          <svg viewBox="0 0 120 140" width="100%" style="max-width:160px; display:block; margin:auto">
+            <!-- Simplified ilium IN -->
+            <path d="M25,20 Q15,40 20,70 Q30,100 60,110 Q90,100 100,70 Q105,40 95,20 Q80,10 60,12 Q40,10 25,20Z" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+            <!-- Iliac wings wider in IN - drawn as wider top -->
+            <path d="M28,22 Q10,38 18,66 Q28,95 60,105 Q92,95 102,66 Q110,38 92,22 Q75,10 60,12 Q45,10 28,22Z" fill="none" stroke="#3b82f6" stroke-width="1" stroke-dasharray="2,2"/>
+            <!-- Obturator foramen IN: narrow tall oval -->
+            <ellipse cx="60" cy="75" rx="14" ry="24" fill="#0f1117" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="60" y="78" font-size="8" fill="#f59e0b" text-anchor="middle">閉孔</text>
+            <!-- Label -->
+            <text x="60" y="130" font-size="9" fill="#60a5fa" text-anchor="middle">窄 + 高（橢圓）</text>
+            <!-- Iliac wing annotation -->
+            <text x="60" y="18" font-size="8" fill="#94a3b8" text-anchor="middle">髂骨翼↔較寬</text>
+          </svg>
+          <div class="text-xs text-slate-300 mt-2">髂骨內旋 → 骨盆往中收攏 → 閉孔被「擠」成高窄橢圓</div>
+        </div>
+        <!-- EX -->
+        <div class="bg-slate-900 rounded-xl p-3 text-center">
+          <div class="text-xs font-bold text-yellow-300 mb-2">EX（外旋）</div>
+          <svg viewBox="0 0 120 140" width="100%" style="max-width:160px; display:block; margin:auto">
+            <!-- Simplified ilium EX - wings narrower -->
+            <path d="M30,20 Q22,40 24,70 Q34,100 60,110 Q86,100 96,70 Q98,40 90,20 Q78,10 60,12 Q42,10 30,20Z" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+            <!-- Obturator foramen EX: wide round oval -->
+            <ellipse cx="60" cy="78" rx="22" ry="16" fill="#0f1117" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="60" y="81" font-size="8" fill="#f59e0b" text-anchor="middle">閉孔</text>
+            <!-- Label -->
+            <text x="60" y="130" font-size="9" fill="#fbbf24" text-anchor="middle">寬 + 扁（圓形）</text>
+            <text x="60" y="18" font-size="8" fill="#94a3b8" text-anchor="middle">髂骨翼↔較窄</text>
+          </svg>
+          <div class="text-xs text-slate-300 mt-2">髂骨外旋 → 骨盆往外張開 → 閉孔被「撐」成扁圓形</div>
+        </div>
+      </div>
+      <div class="bg-slate-800 rounded-lg p-3 mt-3 text-xs">
+        <strong class="text-amber-400">記憶法：</strong>
+        <span class="text-slate-300"> IN = 往內 = 閉孔往內縮 = 窄橢圓。EX = 往外 = 閉孔往外撐 = 寬圓。</span>
+      </div>
+    </div>
+
+    <!-- X-ray 3 baselines -->
+    <div>
+      <div class="text-xs font-bold text-slate-300 mb-2 uppercase tracking-wide">X光骨盆判讀 — 三條基線</div>
+      <p class="text-xs text-slate-400 mb-3">湯普森評估時，X光片上需要畫出三條水平基線來判讀骨盆對稱性：</p>
+      <div class="bg-slate-900 rounded-xl p-4 mb-3">
+        <svg viewBox="0 0 380 240" width="100%" style="max-width:500px; display:block; margin:auto">
+          <!-- Sacrum -->
+          <polygon points="160,55 220,55 228,150 152,150" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Left ilium -->
+          <path d="M152,150 Q108,130 96,90 Q82,58 100,42 Q122,28 148,50 Q158,58 160,55 Z" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Right ilium -->
+          <path d="M228,150 Q272,130 284,90 Q298,58 280,42 Q258,28 232,50 Q222,58 220,55 Z" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Left pubis -->
+          <path d="M152,150 Q148,178 166,200" class="bone-line" stroke="#64748b" stroke-width="1.5" fill="none"/>
+          <!-- Right pubis -->
+          <path d="M228,150 Q232,178 214,200" class="bone-line" stroke="#64748b" stroke-width="1.5" fill="none"/>
+          <!-- Pubic symphysis -->
+          <rect x="164" y="198" width="52" height="18" rx="3" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Left ischium -->
+          <path d="M152,150 Q132,172 136,205 Q140,224 162,220 Q182,218 190,210" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Right ischium -->
+          <path d="M228,150 Q248,172 244,205 Q240,224 218,220 Q198,218 190,210" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <!-- Femoral heads -->
+          <circle cx="128" cy="178" r="20" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+          <circle cx="252" cy="178" r="20" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+
+          <!-- LINE 1: Iliac crest height (green) -->
+          <line x1="82" y1="50" x2="298" y2="50" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <circle cx="96" cy="50" r="3" fill="#22c55e"/>
+          <circle cx="284" cy="50" r="3" fill="#22c55e"/>
+          <text x="12" y="53" font-size="9" fill="#22c55e">①</text>
+
+          <!-- LINE 2: Sacral base (amber) -->
+          <line x1="148" y1="62" x2="232" y2="62" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <circle cx="152" cy="62" r="3" fill="#f59e0b"/>
+          <circle cx="228" cy="62" r="3" fill="#f59e0b"/>
+          <text x="235" y="65" font-size="9" fill="#f59e0b">②</text>
+
+          <!-- LINE 3: Ischial horizontal (red) -->
+          <line x1="122" y1="218" x2="258" y2="218" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <circle cx="140" cy="218" r="3" fill="#ef4444"/>
+          <circle cx="240" cy="218" r="3" fill="#ef4444"/>
+          <text x="262" y="221" font-size="9" fill="#ef4444">③</text>
+        </svg>
+      </div>
+      <div class="space-y-2 text-xs">
+        <div class="flex gap-2 items-start">
+          <span class="text-green-400 font-bold shrink-0">① 髂嵴高度連線</span>
+          <span class="text-slate-300">連接兩側髂嵴最高點。不等高 → 骨盆側傾，可能有 PI 或 AS 錯位。</span>
+        </div>
+        <div class="flex gap-2 items-start">
+          <span class="text-amber-400 font-bold shrink-0">② 薦椎底水平線</span>
+          <span class="text-slate-300">沿薦椎底（S1上緣）畫橫線。傾斜 → 薦椎側傾，影響 Flex/Ext 判讀。</span>
+        </div>
+        <div class="flex gap-2 items-start">
+          <span class="text-red-400 font-bold shrink-0">③ 坐骨水平線</span>
+          <span class="text-slate-300">連接兩側坐骨最低點。不等高 → 骨盆旋轉；PI 側坐骨通常較高（向上旋轉）。</span>
+        </div>
+      </div>
+    </div>
+
+    <button @click="markSection(5)" class="mt-5 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[5] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[5] ? '✓ 視覺辨識已完成' : '標記為已完成'"></span>
+    </button>
+  </div>
+
+  <!-- 觸診 SOP -->
+  <div class="card p-5 mb-6">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-2xl">👐</span>
+      <h2>觸診 SOP + 臨床日誌</h2>
+    </div>
+    <p class="text-sm text-slate-400 mb-4">標準化的觸診流程，確保每次評估一致、不遺漏。建議每次練習後填寫日誌。</p>
+
+    <!-- SOP Steps -->
+    <div class="mb-5">
+      <div class="text-xs font-bold text-slate-300 mb-3 uppercase tracking-wide">6步觸診SOP</div>
+      <div class="space-y-2">
+        <div class="flex gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="badge-blue rounded px-2 py-0.5 text-xs font-bold shrink-0">S1</span>
+          <div class="text-xs"><strong class="text-slate-200">體位確認</strong>：患者俯臥，手臂放鬆置於身體兩側，雙腳自然伸直（不要交叉）。治療師站在床側。</div>
+        </div>
+        <div class="flex gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="badge-blue rounded px-2 py-0.5 text-xs font-bold shrink-0">S2</span>
+          <div class="text-xs"><strong class="text-slate-200">初步腿長評估</strong>：從床尾觀察兩側內踝（或足跟）高度差。記錄哪側較短。</div>
+        </div>
+        <div class="flex gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="badge-blue rounded px-2 py-0.5 text-xs font-bold shrink-0">S3</span>
+          <div class="text-xs"><strong class="text-slate-200">PSIS 觸診（兩側）</strong>：從臀部中線旁往上滑動，找到「酒窩」位置的骨突。雙拇指分別置於左右 PSIS，比較高低。</div>
+        </div>
+        <div class="flex gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="badge-blue rounded px-2 py-0.5 text-xs font-bold shrink-0">S4</span>
+          <div class="text-xs"><strong class="text-slate-200">髂嵴高度評估</strong>：雙手掌沿髂嵴從後往前滑動，感受兩側高度差。</div>
+        </div>
+        <div class="flex gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="badge-blue rounded px-2 py-0.5 text-xs font-bold shrink-0">S5</span>
+          <div class="text-xs"><strong class="text-slate-200">Derifield 測試</strong>：雙手輕握踝關節，請患者彎曲雙膝90度。再次觀察腳跟高度。記錄 Stay Short / Balance / 等長。</div>
+        </div>
+        <div class="flex gap-3 bg-slate-800 rounded-lg p-3">
+          <span class="badge-blue rounded px-2 py-0.5 text-xs font-bold shrink-0">S6</span>
+          <div class="text-xs"><strong class="text-slate-200">坐骨結節確認（若懷疑AS）</strong>：若 PSIS 高於對側（可能 AS），需觸診坐骨結節，確認調整接觸點。坐骨結節位於臀部正下方，較深層。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal Form -->
+    <div class="border border-slate-600 rounded-xl p-4">
+      <div class="text-xs font-bold text-slate-300 mb-3 uppercase tracking-wide">📋 觸診日誌（練習後填寫）</div>
+      <div class="space-y-3 text-sm">
+        <div class="flex gap-3 items-center">
+          <label class="w-32 shrink-0 text-xs text-slate-400">體位確認</label>
+          <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="accent-blue-500"> <span class="text-xs">俯臥、手臂放鬆、雙腳伸直</span></label>
+        </div>
+        <div class="flex gap-3 items-start">
+          <label class="w-32 shrink-0 text-xs text-slate-400 mt-1">短腿側</label>
+          <div class="flex gap-3">
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="short_leg" value="right" class="accent-blue-500"> 右</label>
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="short_leg" value="left" class="accent-blue-500"> 左</label>
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="short_leg" value="none" class="accent-blue-500"> 無差異</label>
+          </div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <label class="w-32 shrink-0 text-xs text-slate-400 mt-1">PSIS 高低</label>
+          <div class="flex gap-3">
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="psis" value="R-low" class="accent-blue-500"> 右低</label>
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="psis" value="L-low" class="accent-blue-500"> 左低</label>
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="psis" value="equal" class="accent-blue-500"> 等高</label>
+          </div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <label class="w-32 shrink-0 text-xs text-slate-400 mt-1">Derifield 結果</label>
+          <div class="flex gap-3 flex-wrap">
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="derifield" value="stay" class="accent-amber-500"> Stay Short（PI錯位）</label>
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="derifield" value="balance" class="accent-green-500"> Balance（功能性）</label>
+            <label class="flex items-center gap-1 cursor-pointer text-xs"><input type="radio" name="derifield" value="equal" class="accent-blue-500"> 等長</label>
+          </div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <label class="w-32 shrink-0 text-xs text-slate-400 mt-1">壓痛點</label>
+          <input type="text" placeholder="例：右側PSIS輕壓痛" class="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500">
+        </div>
+        <div class="flex gap-3 items-start">
+          <label class="w-32 shrink-0 text-xs text-slate-400 mt-1">初步診斷</label>
+          <select class="flex-1 bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-xs text-slate-200">
+            <option value="">選擇...</option>
+            <option>PI-IN（右）</option>
+            <option>PI-EX（右）</option>
+            <option>PI-IN（左）</option>
+            <option>PI-EX（左）</option>
+            <option>AS-IN（右）</option>
+            <option>AS-EX（右）</option>
+            <option>AS-IN（左）</option>
+            <option>AS-EX（左）</option>
+            <option>薦椎前傾</option>
+            <option>薦椎後傾</option>
+            <option>正常</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button @click="markSection(6)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[6] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[6] ? '✓ 觸診已練習' : '標記觸診已練習'"></span>
+    </button>
+  </div>
+
+  <!-- 基礎題庫 -->
   <div class="card p-5 mb-6" x-data="quiz()">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-2xl">📝</span>
-      <h2 class="m-0">W1 題庫（20 題）</h2>
+      <h2 class="m-0">基礎題庫（20 題）</h2>
       <span class="ml-auto text-sm text-slate-400" x-text="`${answered}/${questions.length} 已作答`"></span>
     </div>
 
@@ -395,8 +728,109 @@
       <div class="text-sm mt-1" x-text="score >= 17 ? '✅ 通過（≥ 85%），可進入下一週！' : score >= 14 ? '⚠️ 尚可，建議複習紅色選項再作答' : '❌ 需要複習，重看 SVG 圖解後再試'"></div>
     </div>
 
-    <button @click="markSectionParent(3)" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all">
-      標記題庫為完成
+    <button @click="$dispatch('mark-section', {index: 7})" class="mt-4 px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all">
+      標記基礎題庫為完成
+    </button>
+  </div>
+
+  <!-- 邏輯推演題庫 -->
+  <div class="card p-5 mb-6" x-data="quiz2()">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-2xl">🧩</span>
+      <h2 class="m-0">邏輯推演（20 題）</h2>
+      <span class="ml-auto text-sm text-slate-400" x-text="`${answered}/${questions.length} 已作答`"></span>
+    </div>
+    <p class="text-xs text-slate-500 mb-4">測試臨床推理能力：從現象推原因、從原因推向量。</p>
+
+    <template x-for="(q, qi) in questions" :key="qi">
+      <div class="mb-5 p-4 rounded-xl border border-slate-700 bg-slate-800">
+        <div class="text-xs text-slate-500 mb-1" x-text="`LR${qi+1} · ${q.type}`"></div>
+        <div class="font-medium mb-3 text-sm" x-text="q.q"></div>
+        <div class="space-y-2">
+          <template x-for="(opt, oi) in q.opts" :key="oi">
+            <button @click="answer(qi, oi)" class="w-full text-left px-4 py-2 rounded-lg text-sm border transition-all"
+              :class="getOptClass(qi, oi)" :disabled="q.answered">
+              <span x-text="`${['A','B','C','D'][oi]}. ${opt}`"></span>
+            </button>
+          </template>
+        </div>
+        <div x-show="q.answered" class="mt-3 p-3 rounded-lg bg-slate-900 text-xs text-slate-300" x-text="q.exp"></div>
+      </div>
+    </template>
+
+    <div x-show="answered === questions.length" class="p-4 rounded-xl text-center mb-4" :class="score >= 17 ? 'bg-green-900 border border-green-600' : score >= 14 ? 'bg-yellow-900 border border-yellow-600' : 'bg-red-900 border border-red-600'">
+      <div class="text-2xl font-bold" x-text="`${score} / ${questions.length} 分`"></div>
+      <div class="text-sm mt-1" x-text="score >= 17 ? '✅ 推理能力優秀！' : score >= 14 ? '⚠️ 不錯，仍有進步空間' : '❌ 建議重看力學與向量章節'"></div>
+    </div>
+    <button @click="$dispatch('mark-section', {index: 7})" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all">
+      標記邏輯推演為完成
+    </button>
+  </div>
+
+  <!-- Bug Hunting -->
+  <div class="card p-5 mb-6" x-data="quiz3()">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-2xl">🐛</span>
+      <h2 class="m-0">Bug Hunting（10 題）</h2>
+      <span class="ml-auto text-sm text-slate-400" x-text="`${answered}/${questions.length} 已作答`"></span>
+    </div>
+    <p class="text-xs text-slate-500 mb-4">以下每題描述一個臨床操作場景，找出其中的錯誤。</p>
+
+    <template x-for="(q, qi) in questions" :key="qi">
+      <div class="mb-5 p-4 rounded-xl border border-slate-700 bg-slate-800">
+        <div class="text-xs text-slate-500 mb-1" x-text="`BH${qi+1}`"></div>
+        <div class="font-medium mb-3 text-sm" x-text="q.q"></div>
+        <div class="space-y-2">
+          <template x-for="(opt, oi) in q.opts" :key="oi">
+            <button @click="answer(qi, oi)" class="w-full text-left px-4 py-2 rounded-lg text-sm border transition-all"
+              :class="getOptClass(qi, oi)" :disabled="q.answered">
+              <span x-text="`${['A','B','C','D'][oi]}. ${opt}`"></span>
+            </button>
+          </template>
+        </div>
+        <div x-show="q.answered" class="mt-3 p-3 rounded-lg bg-slate-900 text-xs text-slate-300" x-text="q.exp"></div>
+      </div>
+    </template>
+
+    <div x-show="answered === questions.length" class="p-4 rounded-xl text-center mb-4" :class="score >= 9 ? 'bg-green-900 border border-green-600' : score >= 7 ? 'bg-yellow-900 border border-yellow-600' : 'bg-red-900 border border-red-600'">
+      <div class="text-2xl font-bold" x-text="`${score} / ${questions.length} 分`"></div>
+      <div class="text-sm mt-1" x-text="score >= 9 ? '✅ 安全意識強！' : score >= 7 ? '⚠️ 需強化禁忌症記憶' : '❌ 請重看Red Flags與向量章節'"></div>
+    </div>
+    <button @click="$dispatch('mark-section', {index: 7})" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all">
+      標記Bug Hunting為完成
+    </button>
+  </div>
+
+  <!-- 視覺辨識測驗 -->
+  <div class="card p-5 mb-6" x-data="quiz4()">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-2xl">👁️</span>
+      <h2 class="m-0">視覺辨識測驗（10 題）</h2>
+      <span class="ml-auto text-sm text-slate-400" x-text="`${answered}/${questions.length} 已作答`"></span>
+    </div>
+    <p class="text-xs text-slate-500 mb-4">根據描述的視覺發現（X光/觸診/閉孔形狀）做出診斷判讀。</p>
+
+    <template x-for="(q, qi) in questions" :key="qi">
+      <div class="mb-5 p-4 rounded-xl border border-slate-700 bg-slate-800">
+        <div class="text-xs text-slate-500 mb-1" x-text="`VR${qi+1}`"></div>
+        <div class="font-medium mb-3 text-sm" x-text="q.q"></div>
+        <div class="space-y-2">
+          <template x-for="(opt, oi) in q.opts" :key="oi">
+            <button @click="answer(qi, oi)" class="w-full text-left px-4 py-2 rounded-lg text-sm border transition-all"
+              :class="getOptClass(qi, oi)" :disabled="q.answered">
+              <span x-text="`${['A','B','C','D'][oi]}. ${opt}`"></span>
+            </button>
+          </template>
+        </div>
+        <div x-show="q.answered" class="mt-3 p-3 rounded-lg bg-slate-900 text-xs text-slate-300" x-text="q.exp"></div>
+      </div>
+    </template>
+
+    <div x-show="answered === questions.length" class="p-4 rounded-xl text-center mb-4" :class="score >= 8 ? 'bg-green-900 border border-green-600' : score >= 6 ? 'bg-yellow-900 border border-yellow-600' : 'bg-red-900 border border-red-600'">
+      <div class="text-2xl font-bold" x-text="`${score} / ${questions.length} 分`"></div>
+    </div>
+    <button @click="$dispatch('mark-section', {index: 7})" class="px-4 py-2 rounded-lg text-sm font-bold bg-slate-700 text-slate-300 hover:bg-slate-600 transition-all">
+      標記視覺辨識為完成
     </button>
   </div>
 
@@ -404,14 +838,14 @@
   <div class="card p-5 mb-6">
     <div class="flex items-center gap-2 mb-3">
       <span class="text-2xl">🃏</span>
-      <h2>Anki 卡片匯出（25 張）</h2>
+      <h2>Anki 卡片匯出（60 張）</h2>
     </div>
-    <p class="text-sm text-slate-400 mb-4">點擊下載 .txt 檔案，在 Anki 中選「檔案 → 匯入」，分隔符號選 Tab，即可匯入 25 張 W1 卡片。</p>
+    <p class="text-sm text-slate-400 mb-4">點擊下載 .txt 檔案，在 Anki 中選「檔案 → 匯入」，分隔符號選 Tab，即可匯入 60 張 W1 卡片（解剖 20 + 力學 15 + X光判讀 15 + 安全/臨床 10）。</p>
     <button @click="downloadAnki()" class="px-6 py-3 bg-purple-800 hover:bg-purple-700 text-purple-200 font-bold rounded-lg text-sm transition-all">
       ⬇️ 下載 w1-anki.txt
     </button>
-    <button @click="markSection(4)" class="ml-3 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[4] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
-      <span x-text="sectionDone[4] ? '✓ Anki 已匯入' : '標記為已匯入'"></span>
+    <button @click="markSection(8)" class="ml-3 px-4 py-2 rounded-lg text-sm font-bold transition-all" :class="sectionDone[8] ? 'bg-green-800 text-green-300' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'">
+      <span x-text="sectionDone[8] ? '✓ Anki 已匯入' : '標記為已匯入'"></span>
     </button>
 
     <div class="mt-4 bg-slate-800 rounded-lg p-3">
@@ -468,11 +902,17 @@
 function app() {
   return {
     labelsVisible: true,
-    sectionDone: JSON.parse(localStorage.getItem('w1_sections') || '[false,false,false,false,false]'),
+    sectionDone: JSON.parse(localStorage.getItem('w1_sections') || '[false,false,false,false,false,false,false,false,false]'),
     get completedSections() { return this.sectionDone.filter(Boolean).length; },
-    get progressPct() { return (this.completedSections / 5) * 100; },
+    get progressPct() { return (this.completedSections / 9) * 100; },
     markSection(i) {
       this.sectionDone[i] = !this.sectionDone[i];
+      this.sectionDone = [...this.sectionDone];
+      localStorage.setItem('w1_sections', JSON.stringify(this.sectionDone));
+    },
+    markSectionFromEvent(i) {
+      this.sectionDone[i] = true;
+      this.sectionDone = [...this.sectionDone];
       localStorage.setItem('w1_sections', JSON.stringify(this.sectionDone));
     },
     downloadAnki() {
@@ -502,6 +942,45 @@ function app() {
         ["「功能性短腿」vs「結構性短腿」的差別？", "功能性：由肌肉緊繃或骨盆旋轉引起，Derifield 測試可辨別。結構性：骨骼本身長度不同，測試前後不變。湯普森手法主要處理功能性短腿。"],
         ["骨盆地標評估的標準站姿是什麼？", "患者俯臥（Prone Position），雙腳自然放鬆伸直。治療師站在床尾，評估雙腳長度差異（以內踝或足跟為基準）。"],
         ["C1（環椎）的解剖特色？", "沒有椎體（Vertebral Body），是一個圓環形骨骼，支撐頭顱。別名：Atlas（擎天神）。與枕骨形成 AO 關節（點頭），與 C2 形成 AA 關節（旋轉）。"],
+        // === 力學組 (Biomechanics) ===
+        ["PI髂骨錯位如何造成功能性短腿？（三步鏈）", "① 髂骨後下旋轉（PSIS↓ ASIS↑）→ ② 髖臼跟著上移（髖臼是髂骨的一部分）→ ③ 股骨被拉高→ 腿「看起來」較短。口訣：後下旋轉→髖部上提→腿部縮短。"],
+        ["吊車掛鉤比喻：髖臼 = ？股骨 = ？", "髖臼 = 吊車掛鉤（hook）。股骨 = 掛在鉤上的負重。吊臂（髂骨）旋轉，掛鉤（髖臼）跟著移位，負重（腿）跟著被拉高。"],
+        ["Derifield Stay Short 與 Balance 的力學差別？", "Stay Short：彎腿後骨盆旋轉依然存在（骨骼位移），短腿維持 = PI錯位。Balance：彎腿改變肌肉張力，代償消失 = 功能性（肌肉問題）。"],
+        ["薦椎前傾（Flexion）的骨性機制？", "薦椎底（S1上緣）向前旋轉傾斜。腰椎曲度可能代償性增加。矯正：P-A（後往前）+ I-S（往上推薦椎底）。"],
+        ["薦椎後傾（Extension）的骨性機制？", "薦椎底向後旋轉（尾骨相對往前）。矯正：P-A（後往前）+ S-I（往下壓）。"],
+        ["髖臼（Acetabulum）的解剖位置？", "髂骨外側面的杯狀凹窩，由髂骨、恥骨、坐骨三骨匯合而成。股骨頭嵌入其中形成髖關節（球窩關節）。"],
+        ["EX旋轉時閉孔形狀變化？原因？", "EX（外旋）→ 髂骨向外張開 → 骨盆分開 → 閉孔被撐寬 → 呈寬扁圓形。可視為骨盆「開門」的比喻。"],
+        ["IN旋轉時閉孔形狀變化？原因？", "IN（內旋）→ 髂骨向內收攏 → 骨盆靠攏 → 閉孔被擠壓 → 呈窄高橢圓形。可視為骨盆「關門」的比喻。"],
+        ["Drop Table（落差床）的作用原理？", "利用床板瞬間落下產生的反衝力，沿治療師的接觸點方向傳入脊椎關節，在極短時間內施加精準的脊椎矯正衝擊力（低幅高速 HVLA）。"],
+        ["骨盆旋轉如何影響步態？", "PI錯位造成該側骨盆後旋，步伐縮短，對側步伐代償加大，長期可造成腰背不對稱肌肉緊繃和疼痛。矯正後步態通常立即改善。"],
+        ["薦髂關節的運動模式（點頭運動）？", "薦骨在髂骨之間進行「點頭（nutation）」和「反點頭（counternutation）」。Nutation：薦椎底往前→尾骨往後。Counter-nutation相反。"],
+        ["PI旋轉側，坐骨結節的相對高度？", "PI旋轉時，坐骨結節相對上移（因為髂骨後下旋轉，帶動坐骨向上旋轉）。X光：PI側坐骨水平線偏高。"],
+        ["AS旋轉側，坐骨結節的相對高度？", "AS（前上旋轉）時，坐骨結節相對下移。X光：AS側坐骨水平線偏低。與PI相反。"],
+        ["功能性短腿的臨床意義？", "代表骨盆有旋轉（PI），而非骨骼長度差。Thompson調整矯正骨盆旋轉後，腿長通常立即恢復等長，這也是用於驗證調整效果的指標。"],
+        ["骨盆力線與脊椎的關係？", "骨盆是脊椎的「底座」。骨盆傾斜/旋轉會改變腰椎的力線，引發代償性側彎或曲度異常。Thompson從骨盆評估，正是因為它影響全脊椎的力線。"],
+        // === X光判讀組 ===
+        ["X光骨盆評估的三條基線是什麼？", "① 髂嵴高度連線（兩側髂嵴最高點）② 薦椎底水平線（S1上緣）③ 坐骨水平線（兩側坐骨最低點）。三線不等高代表骨盆不對稱。"],
+        ["髂嵴高度連線判讀：左高右低代表什麼？", "右側骨盆整體較低，可能有右側PI髂骨（PSIS往下）或右側結構問題。需結合其他線和觸診確認。"],
+        ["薦椎底水平線異常代表什麼？", "薦椎底傾斜代表薦骨本身有側傾，可能影響腰椎基線，造成代償性側彎。需評估是否伴隨Flex/Ext成分。"],
+        ["坐骨水平線判讀：右坐骨高於左坐骨代表什麼？", "右側骨盆可能有PI旋轉（PI時坐骨上移）。或左側有AS旋轉（AS時坐骨下移）。需結合髂嵴線和觸診。"],
+        ["閉孔（Obturator Foramen）X光判讀要點？", "正常：兩側形狀對稱。不對稱：一側窄橢圓=IN；一側寬圓=EX。這是判斷水平面旋轉的重要線索。"],
+        ["PI髂骨在X光上的典型表現？", "患側：髂嵴偏低、PSIS相對低於對側、坐骨水平線偏高、可能伴隨薦椎底傾斜。"],
+        ["AS髂骨在X光上的典型表現？", "患側：髂嵴偏高（PSIS往上）、坐骨水平線偏低（坐骨下移）。與PI的X光表現相反。"],
+        ["X光確認薦椎基線的方法？", "在薦骨最上方（S1椎體上緣，即薦椎底）畫一條水平線。觀察這條線與水平的夾角，以及哪側較高/低。"],
+        ["X光判讀中，閉孔對比的臨床用途？", "確認IN/EX旋轉。閉孔比觸診更客觀，但需有正位骨盆X光片（AP view）。一側明顯與另一側不對稱才有意義，輕微差異可能是正常變異。"],
+        ["Thompson手法前，X光需要排除什麼？", "① 骨折（包括壓迫性骨折） ② 脊椎腫瘤/轉移 ③ 嚴重脊椎滑脫（Grade III+） ④ 嚴重骨質疏鬆（骨密度不足）⑤ 嚴重感染性脊椎炎。"],
+        ["骨盆X光正位（AP view）的標準擺位？", "患者仰臥，雙腳稍微內旋（約15-20度），使股骨頸與底片平行，確保骨盆地標對稱顯示。"],
+        // === 安全/臨床組 ===
+        ["嚴重骨質疏鬆的臨床判斷標準（Drop Table禁忌）？", "DEXA骨密度T-score ≤ -2.5（骨質疏鬆）或有脆弱性骨折史。老年患者、長期類固醇使用者需特別謹慎，必要時先照X光評估骨骼密度。"],
+        ["脊椎腫瘤/感染的Red Flag三聯症？", "① 不明原因夜間疼痛（休息無緩解） ② 體重驟降（非刻意減重） ③ 全身性症狀（發燒、疲勞）。三者其中有兩項應立即轉介影像確認。"],
+        ["急性椎間盤突出（神經症狀期）的評估要點？", "放射痛（Radiculopathy）+ 肌力喪失 = 神經根受壓症狀期。此期間避免直接脊椎調整，先評估神經功能，必要時轉介MRI。無神經症狀的椎間盤問題不是絕對禁忌。"],
+        ["脊椎滑脫Grade分級與Drop Table禁忌？", "Grade I（<25%）：相對禁忌，需謹慎。Grade II（25-50%）：高度謹慎。Grade III+（>50%）：絕對禁忌，Drop Table衝擊可能加重滑脫和神經損傷。"],
+        ["初診患者Red Flag篩查SOP（5步）？", "① 問：疼痛性質（夜間/休息痛？）② 問：體重、全身症狀 ③ 問：二便功能 ④ 問：外傷史、骨質疏鬆、腫瘤病史 ⑤ 觸診腹部（AAA）。有任何Red Flag → 轉介，不調整。"],
+        ["馬尾症候群（Cauda Equina）緊急處置流程？", "① 立即停止所有評估 ② 告知患者可能是神經急症 ③ 立即送急診（ER）或叫救護車 ④ 不要嘗試任何手法調整。L4-L5以下神經壓迫，手術時間窗口6-24小時內。"],
+        ["何時需要在調整前取得X光？", "① 外傷後（骨折排除）② 有腫瘤/感染疑慮 ③ 有嚴重骨質疏鬆風險 ④ Grade不明的脊椎滑脫 ⑤ 初診患者有多個Red Flag者。非急性無特殊病史可先評估。"],
+        ["Thompson調整後的即時評估指標？", "重新評估Derifield：腿長是否恢復等長。詢問患者症狀變化。觀察骨盆對稱性（PSIS高度）。調整成功通常立即可見腿長恢復。"],
+        ["調整時「施力過大」的風險？", "軟組織拉傷、關節囊損傷、神經短暫刺激（調整後酸痛）。Thompson Drop Table相對安全（力量可控），但接觸點錯誤+大力 = 可能加重錯位。"],
+        ["Thompson手法的適應症範圍（概述）？", "骨盆/薦髂關節錯位（PI/AS/IN/EX）、薦椎前後傾、頸椎旋轉錯位（C1/C2）。在排除禁忌症後，功能性肌骨問題均可評估是否適合。"],
       ];
       const content = cards.map(c => c[0] + '\t' + c[1]).join('\n');
       const blob = new Blob(['\uFEFF' + content], {type: 'text/plain;charset=utf-8'});
@@ -517,10 +996,6 @@ function quiz() {
   return {
     answered: 0,
     score: 0,
-    markSectionParent(i) {
-      const parent = document.querySelector('[x-data="app()"]')?.__x?.$data;
-      // simple fallback
-    },
     questions: [
       { q: "PSIS 代表什麼解剖位置？", type: "選擇題", opts: ["髂前上棘", "髂後上棘", "薦椎底", "坐骨結節"], ans: 1, exp: "PSIS = Posterior Superior Iliac Spine = 髂後上棘。位於骨盆後側「酒窩」位置，是 PI 髂骨的主要調整接觸點。", answered: false, selected: -1 },
       { q: "患者俯臥，右腿較短。Derifield 測試彎腿 90 度後，右腿依然維持較短（Stay Short）。最可能是？", type: "情境題", opts: ["腿後側肌群緊繃", "結構性短腿", "PI 髂骨錯位", "薦椎後傾"], ans: 2, exp: "Stay Short = PI 髂骨錯位。骨盆旋轉導致視覺上的功能性短腿，彎腿不會讓它消失。需在 PSIS 調整。", answered: false, selected: -1 },
@@ -561,6 +1036,81 @@ function quiz() {
       return 'bg-slate-800 border-slate-700 text-slate-400';
     }
   }
+}
+
+function makeQuizBase(questions) {
+  return {
+    answered: 0, score: 0,
+    questions,
+    answer(qi, oi) {
+      const q = this.questions[qi];
+      if (q.answered) return;
+      q.answered = true; q.selected = oi; this.answered++;
+      if (oi === q.ans) this.score++;
+    },
+    getOptClass(qi, oi) {
+      const q = this.questions[qi];
+      if (!q.answered) return 'bg-slate-700 border-slate-600 hover:bg-slate-600 text-slate-200';
+      if (oi === q.ans) return 'bg-green-900 border-green-600 text-green-200';
+      if (oi === q.selected && oi !== q.ans) return 'bg-red-900 border-red-600 text-red-200';
+      return 'bg-slate-800 border-slate-700 text-slate-400';
+    }
+  };
+}
+
+function quiz2() {
+  return makeQuizBase([
+    { q:"右側 PSIS 低於左側，右側 ASIS 高於左側。最可能的診斷是？", type:"推理", opts:["左側PI髂骨","右側PI髂骨","右側AS髂骨","薦椎後傾"], ans:1, exp:"PI=後下旋轉：PSIS往下，ASIS往上。右側PSIS低、ASIS高 = 右側PI髂骨。", answered:false, selected:-1},
+    { q:"PI-IN 的向量用 M-L（往外）的原因是？", type:"推理", opts:["IN=外旋需往內矯正","IN=內旋需往外矯正","M-L是所有PI錯位的固定向量","施力方向永遠往中線"], ans:1, exp:"IN=髂骨內旋，矯正力方向永遠與錯位相反。內旋 → 往外推 → M-L。", answered:false, selected:-1},
+    { q:"Derifield Stay Short 代表什麼？為什麼彎腿後短腿不消失？", type:"推理", opts:["肌肉緊繃，彎腿拉伸後放鬆","骨盆旋轉，彎腿無法消除骨骼位移","結構性短腿，骨骼長度不等","薦椎傾斜造成代償"], ans:1, exp:"彎腿改變的是肌肉張力，不改變骨骼位置。骨盆旋轉（PI錯位）導致的髖臼上移在彎腿後仍存在，故短腿維持。", answered:false, selected:-1},
+    { q:"AS-EX 的調整接觸點和向量是？", type:"推理", opts:["PSIS外側緣，P-A+S-I+L-M","坐骨結節外側緣，P-A+S-I+L-M","坐骨結節內側緣，P-A+I-S+M-L","PSIS內側緣，P-A+S-I+L-M"], ans:1, exp:"AS錯位→調整點在坐骨結節。EX=外旋→接觸點外側緣。向量：P-A（後往前）+S-I（前上往後下矯正）+L-M（外旋往內矯正）。", answered:false, selected:-1},
+    { q:"薦椎前傾（Flexion）時，薦椎底的方向是往哪裡移動？矯正力方向？", type:"推理", opts:["薦椎底往後，矯正往前（P-A）+往下（S-I）","薦椎底往前，矯正往前（P-A）+往上（I-S）","薦椎底往前，矯正往後（A-P）+往上（I-S）","薦椎底往下，矯正往前（P-A）+往上（I-S）"], ans:1, exp:"Flexion=前傾，薦椎底往前移。矯正從後往前施力（P-A）並往上推（I-S）來恢復水平。", answered:false, selected:-1},
+    { q:"為什麼 Thompson 手法的所有調整都包含 P-A 分量？", type:"推理", opts:["因為治療師永遠站在患者後方","所有骨骼錯位都偏向後方","Drop Table 落差從後方傳遞，主力方向是後往前","P-A 只是慣例，並非必要"], ans:2, exp:"Drop Table 的衝擊力通過治療師手接觸點從後往前傳入，這是 Thompson 手法的核心機制。P-A 是所有調整的基礎方向。", answered:false, selected:-1},
+    { q:"患者右腿短，Derifield Balance。最可能的處置是？", type:"臨床推理", opts:["調整右側PSIS（P-A+I-S+M-L）","調整右側坐骨結節（P-A+S-I）","軟組織放鬆：腿後肌群或梨狀肌","直接轉介X光確認骨盆"], ans:2, exp:"Balance=功能性短腿，肌肉緊繃引起。Thompson手法主要處理骨骼錯位，此情況應先處理軟組織。", answered:false, selected:-1},
+    { q:"IN旋轉時，閉孔（Obturator Foramen）形狀如何變化？", type:"視覺推理", opts:["變寬變扁（圓形）","變窄變高（橢圓）","形狀不變","變成三角形"], ans:1, exp:"IN=髂骨向內旋轉，骨盆收攏，閉孔被往中擠壓 → 變窄變高（橢圓形）。EX相反 → 圓形。", answered:false, selected:-1},
+    { q:"C1向左旋轉錯位，應接觸哪側橫突？施力方向？", type:"推理", opts:["右側橫突，P-A+M-L向右","左側橫突，P-A+M-L向右","右側橫突，P-A+M-L向左","左側橫突，P-A+M-L向左"], ans:1, exp:"C1左旋=左側橫突向後位移，接觸左側橫突。矯正力朝對側（右）：P-A+M-L toward right。", answered:false, selected:-1},
+    { q:"骨盆Drop Table調整前，為何一定要先觸診腹部中線？", type:"安全推理", opts:["確認腰椎曲度","排除腹主動脈瘤（AAA）—搏動性腫塊是絕對禁忌","評估腹肌緊張度","確定薦椎前傾方向"], ans:1, exp:"腹主動脈（AAA）位於L4前方，Drop Table衝擊可能造成破裂風險。觸診到搏動性腫塊必須停止並轉介影像。", answered:false, selected:-1},
+    { q:"患者俯臥，右腿短，Stay Short。右側PSIS低、ASIS高，右側閉孔X光呈窄橢圓。完整診斷？", type:"綜合推理", opts:["右側PI-EX","右側PI-IN","右側AS-IN","左側PI-IN"], ans:1, exp:"右側PSIS低+ASIS高=PI。閉孔窄橢圓=IN（內旋）。因此：右側PI-IN。調整點：右PSIS內側緣，向量P-A+I-S+M-L。", answered:false, selected:-1},
+    { q:"薦椎左側基線比右側低（薦椎底左低右高）。代表薦椎往哪邊側傾？", type:"X光推理", opts:["左側傾（左側低）","右側傾（右側低）","前傾（Flexion）","後傾（Extension）"], ans:0, exp:"基線左側低=薦椎底左側較低=薦椎向左側傾。需評估是否伴隨Flex或Ext。", answered:false, selected:-1},
+    { q:"Derifield 測試的評估基準點是哪裡？", type:"技術細節", opts:["PSIS位置","ASIS位置","兩側內踝或足跟","膝蓋彎曲角度"], ans:2, exp:"治療師從床尾觀察，基準點是兩側內踝（或足跟）的高度差，不是骨盆骨突。", answered:false, selected:-1},
+    { q:"功能性短腿的「功能性」意指什麼？", type:"概念", opts:["可以透過手術矯正","由骨骼長度差異造成","由肌肉或骨盆旋轉引起，骨骼長度實際相同","只發生在年輕患者"], ans:2, exp:"功能性=非結構性。骨骼長度實際相同，是骨盆旋轉或肌肉張力改變了股骨的起始位置，造成視覺上的腿長差。", answered:false, selected:-1},
+    { q:"同一患者可以同時有PI和AS錯位嗎？", type:"臨床推理", opts:["不可能，兩者互斥","可以，但通常只有最顯著的錯位需要優先調整","只有在骨折後才可能","不可能，Thompson只處理單一錯位"], ans:1, exp:"骨盆兩側可以各自有不同錯位（如右PI+左AS），或同側複合錯位。Thompson評估時先處理最主要的功能問題（通常是造成腿長差的那側）。", answered:false, selected:-1},
+    { q:"調整後立即重評估Derifield，腿長恢復等長。這說明了什麼？", type:"臨床推理", opts:["療效持久","已成功矯正骨盆旋轉（功能性短腿消除）","結構性短腿不可能改善","應繼續加強調整"], ans:1, exp:"立即腿長恢復=骨盆旋轉已矯正，髖臼位置恢復正常，功能性短腿消除。這驗證了診斷和調整的正確性。", answered:false, selected:-1},
+    { q:"若患者有「不明原因夜間疼痛 + 體重驟降」，最需要懷疑什麼？", type:"安全推理", opts:["嚴重肌肉緊繃","脊椎腫瘤或感染（Red Flag）","嚴重骨質疏鬆","薦椎前傾"], ans:1, exp:"不明原因夜間疼痛+體重驟降=Red Flag組合，需懷疑脊椎腫瘤或感染。必須先轉介影像學檢查，不可直接調整。", answered:false, selected:-1},
+    { q:"髖臼在PI旋轉時為什麼會「上移」？", type:"力學推理", opts:["股骨頭被肌肉拉上去","髖臼是髂骨的一部分，髂骨旋轉帶動髖臼位置改變","薦椎後傾推動髖臼上移","重力作用"], ans:1, exp:"髖臼嵌在髂骨外側面。PI旋轉時整塊髂骨後下旋轉，帶動髖臼向上移位。吊車掛鉤比喻：吊臂動，掛鉤跟著動。", answered:false, selected:-1},
+    { q:"X光片顯示兩側髂嵴等高，但薦椎底明顯傾斜。最可能的問題是？", type:"X光推理", opts:["雙側PI錯位","薦椎側傾（可能薦椎Flex或Ext伴側傾）","單側AS錯位","骨盆正常"], ans:1, exp:"髂嵴等高代表骨盆左右對稱，但薦椎底傾斜說明薦骨本身有側傾。需進一步評估是否伴隨Flex（前傾）或Ext（後傾）成分。", answered:false, selected:-1},
+    { q:"C2 棘突錯位的調整向量「視旋轉方向」是指什麼？", type:"技術細節", opts:["看脊椎側彎方向","看棘突偏向哪側決定M-L或L-M分量","看患者主訴疼痛位置","看頸椎曲度"], ans:1, exp:"C2棘突偏右=右旋，矯正往左推 → L-M（由右外往左內）。棘突偏左=左旋，矯正往右推 → M-L。接觸點就在偏移側的棘突。", answered:false, selected:-1}
+  ]);
+}
+
+function quiz3() {
+  return makeQuizBase([
+    { q:"Case：患者俯臥，Derifield彎腿後兩腳等長（Balance）。治療師判斷「右側PI錯位」，在右PSIS施力 P-A+I-S+M-L。錯在哪裡？", type:"Bug Hunting", opts:["向量M-L錯了，應用L-M","接觸點應在坐骨結節","Balance代表功能性短腿，不應調整PSIS骨盆","應先做X光確認"], ans:2, exp:"Balance=彎腿後等長=功能性（肌肉）問題，非PI骨盆錯位。直接調整PSIS是錯誤診斷。正確做法：軟組織處理。", answered:false, selected:-1},
+    { q:"Case：右側PI-EX。治療師接觸右PSIS內側緣，施力P-A+I-S+L-M。哪裡錯了？", type:"Bug Hunting", opts:["向量應是M-L","EX應接觸PSIS外側緣（非內側緣）","應接觸坐骨結節","向量應加A-P分量"], ans:1, exp:"EX=髂骨外旋，接觸點在PSIS外側緣（外旋那側突出的地方）。內側緣是IN的接觸點。其餘向量P-A+I-S+L-M是正確的。", answered:false, selected:-1},
+    { q:"Case：左側AS-IN。治療師選坐骨結節接觸點，施力P-A+I-S+M-L。哪裡錯了？", type:"Bug Hunting", opts:["接觸點應在PSIS","AS錯位需S-I（往下）方向，不是I-S（往上）","向量M-L應改成L-M","以上都正確"], ans:1, exp:"AS=Anterior Superior（前上錯位），矯正方向需向後（P-A）向下（S-I）。用I-S（往上）方向是錯的，會加重錯位。", answered:false, selected:-1},
+    { q:"Case：患者腹部觸診時，治療師感到肚臍左方有搏動性腫塊。治療師記錄後繼續進行L4 Drop Table調整。錯在哪裡？", type:"Bug Hunting", opts:["記錄方式不正確","搏動性腫塊=疑似AAA，是絕對禁忌，必須立即停止並轉介","應先做Derifield再決定","應改用頸椎調整替代"], ans:1, exp:"腹部搏動性腫塊=疑似腹主動脈瘤（AAA），是Thompson手法的絕對禁忌症。必須立即停止並轉介超音波/影像確認。", answered:false, selected:-1},
+    { q:"Case：薦椎前傾（Sacrum Flexion）。治療師在薦椎底施力P-A + S-I。哪裡錯了？", type:"Bug Hunting", opts:["接觸點應在PSIS","S-I（往下）方向錯了，Flexion需I-S（往上）矯正","應加M-L分量","向量P-A是錯的"], ans:1, exp:"Sacrum Flexion=薦椎底往前傾。矯正需從後往前（P-A）並向上推（I-S）讓薦椎底「抬起」。S-I是Sacrum Extension的方向。", answered:false, selected:-1},
+    { q:"Case：右側PI-IN錯位。治療師接觸左側PSIS，施力P-A+I-S+M-L。哪裡錯了？", type:"Bug Hunting", opts:["向量M-L應改L-M","接觸點方向：應接觸右側PSIS，不是左側","應加S-I分量","向量正確但接觸點深度不夠"], ans:1, exp:"右側PI錯位，調整點在右側PSIS。接觸左側PSIS完全無法矯正右側的錯位。基本規則：哪側錯位調哪側。", answered:false, selected:-1},
+    { q:"Case：患者主訴雙腿麻木持續2天，今日又出現排尿困難。治療師進行Derifield評估後發現左側PI錯位，開始調整左PSIS。錯在哪裡？", type:"Bug Hunting", opts:["應先做X光確認才能調整","雙腿麻木+二便障礙=馬尾症候群Red Flag，禁止手法，立即送急診","應改調整薦椎","Derifield評估步驟有誤"], ans:1, exp:"雙腿麻木+大小便失控=馬尾症候群（Cauda Equina Syndrome），神經急症。任何手法調整都被禁止，必須立即送急診。", answered:false, selected:-1},
+    { q:"Case：X光確認患者L4-L5有Grade III脊椎滑脫。治療師說「輕微調整沒問題」，進行Drop Table。錯在哪裡？", type:"Bug Hunting", opts:["Grade III需更大力才有效","Grade III+脊椎滑脫是Drop Table絕對禁忌症","應改用頸椎調整","X光結果不影響Thompson操作"], ans:1, exp:"Grade III脊椎滑脫（椎體位移>50%）是Thompson Drop Table的絕對禁忌症，落差衝擊有加重脊椎損傷的風險。必須停止並轉介外科評估。", answered:false, selected:-1},
+    { q:"Case：C1向右旋轉錯位。治療師接觸右側C1橫突，施力P-A + M-L向右（朝右）。哪裡錯了？", type:"Bug Hunting", opts:["接觸點應在左側橫突","M-L方向應朝對側（向左），不是向右","應同時加I-S分量","C1調整不用M-L分量"], ans:1, exp:"C1右旋，接觸右側橫突正確（橫突向右後偏移）。但施力方向應朝對側（向左，M-L toward left），矯正旋轉。向右是錯誤方向，會加重右旋。", answered:false, selected:-1},
+    { q:"Case：患者剛發生車禍，頸部疼痛，X光未做。治療師觸診到C1橫突右側壓痛，認為是C1右旋，直接進行Drop Table頸椎調整。錯在哪裡？", type:"Bug Hunting", opts:["應先評估腰椎","外傷後未做X光排除骨折/不穩定即進行調整，存在嚴重安全風險","應調整薦椎而非頸椎","Drop Table不能用於頸椎"], ans:1, exp:"外傷後（車禍）未先影像學排除骨折、韌帶撕裂、頸椎不穩定，直接進行脊椎調整是危險行為。必須先X光/CT排除骨性損傷。", answered:false, selected:-1}
+  ]);
+}
+
+function quiz4() {
+  return makeQuizBase([
+    { q:"俯臥評估：右側PSIS明顯低於左側，右側ASIS高於左側。診斷？", type:"視覺辨識", opts:["左側PI髂骨","右側PI髂骨","右側AS髂骨","薦椎後傾"], ans:1, exp:"PSIS往下+ASIS往上=PI旋轉。右側出現此特徵=右側PI髂骨錯位。", answered:false, selected:-1},
+    { q:"X光觀察：右側閉孔呈窄高橢圓形，左側閉孔正常圓形。右側骨盆旋轉？", type:"視覺辨識", opts:["EX（外旋）","IN（內旋）","PI（後下）","AS（前上）"], ans:1, exp:"閉孔窄高橢圓=IN內旋（骨盆收攏，閉孔被擠壓）。圓形=EX。IN/EX描述水平面旋轉，需與PI/AS（垂直面）組合成完整診斷。", answered:false, selected:-1},
+    { q:"X光三基線：①髂嵴連線左高右低；②薦椎底傾斜左高右低；③坐骨連線左高右低。哪側骨盆較低？", type:"X光判讀", opts:["左側整體較低","右側整體較低","骨盆等高，薦椎問題","無法判斷"], ans:1, exp:"三條線都顯示左高右低，代表右側骨盆（包括髂骨和薦椎底）整體較低。這是典型的右側PI髂骨錯位X光表現。", answered:false, selected:-1},
+    { q:"Derifield測試：右腿先短，彎腿後等長。最可能的診斷？", type:"臨床視覺", opts:["右側PI髂骨錯位（Stay Short）","功能性短腿（Balance），可能是右腿後肌緊繃","結構性短腿","薦椎側傾"], ans:1, exp:"彎腿後恢復等長=Balance=功能性短腿。肌肉張力在彎腿後改變，旋轉代償被消除。這不是PI骨盆錯位。", answered:false, selected:-1},
+    { q:"X光：左側閉孔比右側更寬更扁（呈圓形）。左側骨盆旋轉方向？", type:"X光判讀", opts:["IN（內旋）","EX（外旋）","PI（後下旋轉）","AS（前上旋轉）"], ans:1, exp:"閉孔寬扁圓形=EX（外旋）：髂骨向外展開，閉孔被撐寬。調整時L-M（由外往內）矯正外旋。", answered:false, selected:-1},
+    { q:"觸診：右側PSIS低、ASIS高，右側閉孔X光呈圓形。完整診斷？", type:"綜合辨識", opts:["右側PI-IN","右側PI-EX","右側AS-EX","左側PI-IN"], ans:1, exp:"PSIS低+ASIS高=PI。閉孔圓形=EX外旋。合計：右側PI-EX。接觸點：右PSIS外側緣。向量：P-A+I-S+L-M。", answered:false, selected:-1},
+    { q:"俯臥：右腿短，Stay Short（彎腿後維持）。右側PSIS觸診有壓痛，右PSIS比左PSIS低。治療師調整哪裡？", type:"臨床決策", opts:["左側PSIS","右側PSIS（PI錯位確認）","右側坐骨結節","薦椎底"], ans:1, exp:"Stay Short=PI骨盆錯位，右側PSIS低確認=右側PI。調整點：右PSIS。向量根據IN/EX決定（需進一步確認閉孔形狀）。", answered:false, selected:-1},
+    { q:"X光：薦椎底線傾斜（右高左低）。薦椎傾向哪側？", type:"X光判讀", opts:["薦椎底右側低（薦椎向右傾）","薦椎底左側低（薦椎向左傾）","薦椎後傾（Extension）","薦椎前傾（Flexion）"], ans:1, exp:"薦椎底線右高左低=右側較高，左側較低=薦椎底向左傾斜。需同時評估是否有Flex/Ext成分。", answered:false, selected:-1},
+    { q:"評估發現：左側PSIS高、ASIS低，左腿較長，Derifield Stay Short。最可能的錯位？", type:"視覺辨識", opts:["左側PI髂骨","左側AS髂骨","右側PI髂骨","右側AS髂骨"], ans:1, exp:"PSIS高+ASIS低=AS（Anterior Superior：PSIS往上，ASIS往下）。左側出現+Stay Short確認骨盆錯位=左側AS髂骨。接觸點：左坐骨結節。", answered:false, selected:-1},
+    { q:"正常骨盆X光中，兩側閉孔應呈現什麼形狀？", type:"基礎視覺", opts:["兩側都呈窄橢圓（IN）","兩側都呈寬圓（EX）","兩側形狀對稱（略呈橢圓），無明顯大小差異","兩側完全不透光"], ans:2, exp:"正常骨盆兩側閉孔應形狀對稱、大小相近。若一側明顯比另一側更窄或更圓，才提示IN/EX旋轉差異。", answered:false, selected:-1}
+  ]);
 }
 </script>
 </body>
